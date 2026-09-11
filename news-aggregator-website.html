@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Global News Hub</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --light-gray: #f5f5f5;
+            --dark-gray: #333;
+            --text-color: #2c3e50;
+            --card-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', sans-serif;
+        }
+        
+        body {
+            background-color: var(--light-gray);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+        
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .header-container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo span {
+            color: var(--secondary-color);
+        }
+        
+        .logo-icon {
+            margin-right: 10px;
+            font-size: 2rem;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+        
+        nav ul li {
+            margin-left: 1.5rem;
+        }
+        
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        nav ul li a:hover {
+            color: var(--secondary-color);
+        }
+        
+        .active {
+            color: var(--secondary-color);
+            border-bottom: 2px solid var(--secondary-color);
+        }
+        
+        .hero {
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('/api/placeholder/1200/400') center/cover no-repeat;
+            height: 400px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: white;
+            padding: 0 20px;
+        }
+        
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin-bottom: 2rem;
+        }
+        
+        .search-container {
+            width: 100%;
+            max-width: 600px;
+            display: flex;
+        }
+        
+        .search-input {
+            flex-grow: 1;
+            padding: 12px 20px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 4px 0 0 4px;
+        }
+        
+        .search-btn {
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 0 20px;
+            border-radius: 0 4px 4px 0;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .search-btn:hover {
+            background-color: #2980b9;
+        }
+        
+        .categories {
+            background-color: white;
+            padding: 1rem 0;
+            box-shadow: var(--card-shadow);
+        }
+        
+        .categories-container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .category-btn {
+            background-color: var(--light-gray);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+        
+        .category-btn:hover, .category-btn.selected {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+        
+        main {
+            width: 90%;
+            max-width: 1200px;
+            margin: 2rem auto;
+        }
+        
+        .news-container {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+        }
+        
+        .main-news {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+        
+        .featured-news {
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+        }
+        
+        .featured-image {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+        }
+        
+        .featured-content {
+            padding: 20px;
+        }
+        
+        .featured-content h2 {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+        
+        .news-meta {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .source {
+            margin-right: 15px;
+            font-weight: 600;
+        }
+        
+        .time {
+            margin-right: 15px;
+        }
+        
+        .category-tag {
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 3px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+        }
+        
+        .news-excerpt {
+            margin-bottom: 20px;
+            line-height: 1.7;
+        }
+        
+        .read-more {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 4px;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+        
+        .read-more:hover {
+            background-color: #1a2530;
+        }
+        
+        .news-list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+        
+        .news-card {
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            display: flex;
+        }
+        
+        .news-image {
+            width: 200px;
+            height: 180px;
+            object-fit: cover;
+        }
+        
+        .news-content {
+            padding: 15px;
+            flex-grow: 1;
+        }
+        
+        .news-content h3 {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+        
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+        
+        .sidebar-widget {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: var(--card-shadow);
+        }
+        
+        .widget-title {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--light-gray);
+        }
+        
+        .trending-list {
+            list-style: none;
+        }
+        
+        .trending-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--light-gray);
+        }
+        
+        .trending-item:last-child {
+            border-bottom: none;
+        }
+        
+        .trending-number {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--secondary-color);
+            margin-right: 15px;
+            width: 30px;
+        }
+        
+        .trending-title {
+            font-weight: 500;
+        }
+        
+        .sources-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .source-badge {
+            background-color: var(--light-gray);
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .source-badge:hover {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+        
+        .newsletter-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .form-input {
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        
+        .subscribe-btn {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-weight: 500;
+        }
+        
+        .subscribe-btn:hover {
+            background-color: #c0392b;
+        }
+        
+        .load-more {
+            display: block;
+            width: 200px;
+            margin: 30px auto;
+            padding: 12px 0;
+            text-align: center;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-size: 1rem;
+        }
+        
+        .load-more:hover {
+            background-color: #1a2530;
+        }
+        
+        footer {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 3rem 0 1rem;
+        }
+        
+        .footer-container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 30px;
+        }
+        
+        .footer-column h3 {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+        
+        .footer-column h3::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 2px;
+            background-color: var(--secondary-color);
+        }
+        
+        .footer-links {
+            list-style: none;
+        }
+        
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+        
+        .footer-links a {
+            color: #ccc;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-links a:hover {
+            color: var(--secondary-color);
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .social-icon {
+            background-color: rgba(255,255,255,0.1);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background-color 0.3s;
+        }
+        
+        .social-icon:hover {
+            background-color: var(--secondary-color);
+        }
+        
+        .copyright {
+            text-align: center;
+            margin-top: 3rem;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            color: #ccc;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 992px) {
+            .news-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            nav ul {
+                margin-top: 15px;
+            }
+            
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+            
+            .news-card {
+                flex-direction: column;
+            }
+            
+            .news-image {
+                width: 100%;
+                height: 200px;
+            }
+            
+            .footer-container {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            nav ul {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            nav ul li {
+                margin: 5px 10px;
+            }
+            
+            .hero {
+                height: 350px;
+            }
+            
+            .search-container {
+                flex-direction: column;
+            }
+            
+            .search-input {
+                border-radius: 4px;
+                margin-bottom: 10px;
+            }
+            
+            .search-btn {
+                border-radius: 4px;
+                padding: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo">
+                <span class="logo-icon">📰</span>
+                Global<span>News</span>Hub
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#" class="active">Home</a></li>
+                    <li><a href="#">World</a></li>
+                    <li><a href="#">Politics</a></li>
+                    <li><a href="#">Business</a></li>
+                    <li><a href="#">Technology</a></li>
+                    <li><a href="#">Science</a></li>
+                    <li><a href="#">Entertainment</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    
+    <section class="hero">
+        <h1>Your Gateway to Global News</h1>
+        <p>Stay informed with the latest headlines from trusted sources around the world, all in one place.</p>
+        <div class="search-container">
+            <input type="text" class="search-input" placeholder="Search for news...">
+            <button class="search-btn">Search</button>
+        </div>
+    </section>
+    
+    <section class="categories">
+        <div class="categories-container">
+            <button class="category-btn selected">All</button>
+            <button class="category-btn">Breaking News</button>
+            <button class="category-btn">World</button>
+            <button class="category-btn">Politics</button>
+            <button class="category-btn">Business</button>
+            <button class="category-btn">Technology</button>
+            <button class="category-btn">Science</button>
+            <button class="category-btn">Health</button>
+            <button class="category-btn">Sports</button>
+            <button class="category-btn">Entertainment</button>
+        </div>
+    </section>
+    
+    <main>
+        <div class="news-container">
+            <div class="main-news">
+                <article class="featured-news">
+                    <img src="/api/placeholder/800/400" alt="Featured News" class="featured-image">
+                    <div class="featured-content">
+                        <h2>Global Climate Summit Reaches Landmark Agreement on Emissions Reduction</h2>
+                        <div class="news-meta">
+                            <span class="source">Reuters</span>
+                            <span class="time">2 hours ago</span>
+                            <span class="category-tag">World</span>
+                        </div>
+                        <p class="news-excerpt">
+                            World leaders have reached a historic agreement at the Global Climate Summit, pledging to reduce carbon emissions by 50% by 2030. The deal, which involved intense negotiations among 195 countries, marks a significant step forward in the global fight against climate change. The agreement includes mechanisms for financial support to developing nations and strict monitoring protocols.
+                        </p>
+                        <a href="#" class="read-more">Read Full Article</a>
+                    </div>
+                </article>
+                
+                <div class="news-list">
+                    <article class="news-card">
+                        <img src="/api/placeholder/300/200" alt="News Image" class="news-image">
+                        <div class="news-content">
+                            <h3>Technology Giants Announce Joint Initiative on AI Safety Standards</h3>
+                            <div class="news-meta">
+                                <span class="source">Tech Chronicle</span>
+                                <span class="time">5 hours ago</span>
+                                <span class="category-tag">Technology</span>
+                            </div>
+                            <p class="news-excerpt">
+                                Leading technology companies have formed an unprecedented alliance to develop common safety standards for artificial intelligence development and deployment.
+                            </p>
+                            <a href="#" class="read-more">Read More</a>
+                        </div>
+                    </article>
+                    
+                    <article class="news-card">
+                        <img src="/api/placeholder/300/200" alt="News Image" class="news-image">
+                        <div class="news-content">
+                            <h3>Global Markets Rally as Central Banks Signal Coordinated Policy Shift</h3>
+                            <div class="news-meta">
+                                <span class="source">Financial Times</span>
+                                <span class="time">8 hours ago</span>
+                                <span class="category-tag">Business</span>
+                            </div>
+                            <p class="news-excerpt">
+                                Stock markets worldwide surged today following announcements from major central banks indicating a coordinated approach to monetary policy in response to changing economic conditions.
+                            </p>
+                            <a href="#" class="read-more">Read More</a>
+                        </div>
+                    </article>
+                    
+                    <article class="news-card">
+                        <img src="/api/placeholder/300/200" alt="News Image" class="news-image">
+                        <div class="news-content">
+                            <h3>Breakthrough in Cancer Research: New Therapy Shows Promising Results in Clinical Trials</h3>
+                            <div class="news-meta">
+                                <span class="source">Medical Journal</span>
+                                <span class="time">1 day ago</span>
+                                <span class="category-tag">Health</span>
+                            </div>
+                            <p class="news-excerpt">
+                                Scientists have announced a significant advancement in cancer treatment with a novel immunotherapy approach demonstrating unprecedented success rates in late-stage clinical trials.
+                            </p>
+                            <a href="#" class="read-more">Read More</a>
+                        </div>
+                    </article>
+                    
+                    <article class="news-card">
+                        <img src="/api/placeholder/300/200" alt="News Image" class="news-image">
+                        <div class="news-content">
+                            <h3>Historic Peace Treaty Signed Between Long-Standing Regional Rivals</h3>
+                            <div class="news-meta">
+                                <span class="source">Global Post</span>
+                                <span class="time">12 hours ago</span>
+                                <span class="category-tag">Politics</span>
+                            </div>
+                            <p class="news-excerpt">
+                                After decades of tension and periodic conflict, two neighboring nations have signed a comprehensive peace agreement that diplomats are calling a model for conflict resolution.
+                            </p>
+                            <a href="#" class="read-more">Read More</a>
+                        </div>
+                    </article>
+                </div>
+                
+                <button class="load-more">Load More News</button>
+            </div>
+            
+            <aside class="sidebar">
+                <div class="sidebar-widget">
+                    <h3 class="widget-title">Trending Now</h3>
+                    <ul class="trending-list">
+                        <li class="trending-item">
+                            <span class="trending-number">1</span>
+                            <span class="trending-title">Space Agency Announces Plans for First Permanent Lunar Base</span>
+                        </li>
+                        <li class="trending-item">
+                            <span class="trending-number">2</span>
+                            <span class="trending-title">Global Technology Conference Unveils Next-Generation Devices</span>
+                        </li>
+                        <li class="trending-item">
+                            <span class="trending-number">3</span>
+                            <span class="trending-title">Record-Breaking Heat Wave Affects Multiple Continents</span>
+                        </li>
+                        <li class="trending-item">
+                            <span class="trending-number">4</span>
+                            <span class="trending-title">Major Sports Upset as Underdog Team Claims Championship</span>
+                        </li>
+                        <li class="trending-item">
+                            <span class="trending-number">5</span>
+                            <span class="trending-title">Renowned Artist's Lost Masterpiece Discovered After 70 Years</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="sidebar-widget">
+                    <h3 class="widget-title">News Sources</h3>
+                    <div class="sources-list">
+                        <span class="source-badge">Reuters</span>
+                        <span class="source-badge">Associated Press</span>
+                        <span class="source-badge">BBC</span>
+                        <span class="source-badge">CNN</span>
+                        <span class="source-badge">Al Jazeera</span>
+                        <span class="source-badge">Le Monde</span>
+                        <span class="source-badge">The Guardian</span>
+                        <span class="source-badge">Deutsche Welle</span>
+                        <span class="source-badge">Xinhua</span>
+                        <span class="source-badge">The Times of India</span>
+                    </div>
+                </div>
+                
+                <div class="sidebar-widget">
+                    <h3 class="widget-title">Weather Update</h3>
+                    <div style="text-align: center;">
+                        <div style="font-size: 3rem; margin-bottom: 10px;">☀️</div>
+                        <div style="font-size: 1.8rem; font-weight: bold;">28°C</div>
+                        <div>New York City, NY</div>
+                        <div style="margin-top: 10px; color: #666;">Updated: 11:30 AM</div>
+                    </div>
+                </div>
+                
+                <div class="sidebar-widget">
+                    <h3 class="widget-title">Newsletter</h3>
+                    <p style="margin-bottom: 15px;">Subscribe to our daily digest for the most important headlines delivered directly to your inbox.</p>
+                    <form class="newsletter-form">
+                        <input type="email" class="form-input" placeholder="Your email address">
+                        <button type="submit" class="subscribe-btn">Subscribe</button>
+                    </form>
+                </div>
+            </aside>
+        </div>
+    </main>
+    
+    <footer>
+        <div class="footer-container">
+            <div class="footer-column">
+                <h3>About Us</h3>
+                <ul class="footer-links">
+                    <li><a href="#">Our Mission</a></li>
+                    <li><a href="#">Editorial Team</a></li>
+                    <li><a href="#">Ethics Policy</a></li>
+                    <li><a href="#">Fact-Checking Standards</a></li>
+                    <li><a href="#">Careers</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-column">
+                <h3>Categories</h3>
+                <ul class="footer-links">
+                    <li><a href="#">World News</a></li>
+                    <li><a href="#">Politics</a></li>
+                    <li><a href="#">Business & Economy</a></li>
+                    <li><a href="#">Technology</a></li>
+                    <li><a href="#">Science & Health</a></li>
+                    <li><a href="#">Entertainment</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-column">
+                <h3>Support</h3>
+                <ul class="footer-links">
+                    <li><a href="#">Help Center</a></li>
+                    <li><a href="#">Contact Us</a></li>
+                    <li><a href="#">Report an Issue</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Terms of Service</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-column">
+                <h3>Connect With Us</h3>
+                <p>Follow us on social media for the latest updates and breaking news.</p>
+                <div class="social-links">
+                    <a href="#" class="social-icon">fb</a>
+                    <a href="#" class="social-icon">tw</a>
+                    <a href="#" class="social-icon">ig</a>
+                    <a href="#" class="social-icon">yt</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="copyright">
+            © 2025 Global News Hub. All rights reserved.
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Category buttons functionality
+            const categoryButtons = document.querySelectorAll('.category-btn');
+            
+            categoryButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // Remove selected class from all buttons
+                    categoryButtons.forEach(btn => {
+                        btn.classList.remove('selected');
+                    });
+                    
+                    // Add selected class to clicked button
+                    this.classList.add('selected');
+                    
+                    // In a real application, this would filter news by category
+                    const category = this.textContent;
+                    console.log(`Filtering by category: ${category}`);
+                    
+                    // For demo purposes, we'll simulate loading new content
+                    if (category !== 'All') {
+                        alert(`Loading ${category} news articles...`);
+                    }
+                });
+            });
+            
+            // Search functionality
+            const searchButton = document.querySelector('.search-btn');
+            const searchInput = document.querySelector('.search-input');
+            
+            searchButton.addEventListener('click', function() {
+                const searchQuery = searchInput.value.trim();
+                if (searchQuery) {
+                    alert(`Searching for: ${searchQuery}`);
+                    // In a real app, this would trigger an API call and update the news list
+                }
+            });
+            
+            // Enter key in search input
+            searchInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    searchButton.click();
+                }
+            });
+            
+            // Load more button functionality
+            const loadMoreButton = document.querySelector('.load-more');
+            
+            loadMoreButton.addEventListener('click', function() {
+                // In a real app, this would load more news articles
+                alert('Loading more news articles...');
+                
+                // For demo purposes, we'll simulate adding more articles
+                const newsList = document.querySelector('.news-list');
+                
+                const newsTopics = [
+                    'New Archaeological Discovery Rewrites Ancient History',
+                    'Revolutionary Transportation System Unveiled in Major City',
+                    'International Film Festival Announces Award Winners',
+                    'Scientists Report Major Breakthrough in Renewable Energy'
+                ];
+                
+                const sources = ['World News', 'Tech Today', 'Arts Daily', 'Science Weekly'];
+                const categories = ['Science', 'Technology', 'Entertainment', 'Environment'];
+                
+                // Create and append new articles
+                for (let i = 0; i < newsTopics.length; i++) {
+                    const article = document.createElement('article');
+                    article.className = 'news-card';
+                    
+                    article.innerHTML = `
+                        <img src="/api/placeholder/300/200" alt="News Image" class="news-image">
+                        <div class="news-content">
+                            <h3>${newsTopics[i]}</h3>
+                            <div class="news-meta">
+                                <span class="source">${sources[i]}</span>
+                                <span class="time">${Math.floor(Math.random() * 12) + 1} hours ago</span>
+                                <span class="category-tag">${categories[i]}</span>
+                            </div>
+                            <p class="news-excerpt">
+                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                            </p>
+                            <a href="#" class="read-more">Read More</a>
+                        </div>
+                    `;
+                    
+                    newsList.appendChild(article);
+                }
+            });
+            
+            // Newsletter subscription
+            const newsletterForm = document.querySelector('.newsletter-form');
+            
+            newsletterForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const emailInput = this.querySelector('input[type="email"]');
+                const email = emailInput.value.trim();
+                
+                if (email) {
+                    alert(`Thank you for subscribing with: ${email}`);
+                    emailInput.value = '';
+                }
+            });
+            
+            // Source badges functionality
+            const sourceBadges = document.querySelectorAll('.source-badge');
+            
+            sourceBadges.forEach(badge => {
+                badge.addEventListener('click', function() {
+                    const source = this.textContent;
+                    alert(`Filtering news from: ${source}`);
+                    // In a real app, this would filter news by source
+                });
+            });
+            
+            // Trending items functionality
+            const trendingItems = document.querySelectorAll('.trending-item');
+            
+            trendingItems.forEach(item => {
