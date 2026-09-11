@@ -1,1 +1,69 @@
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Global News Hub — Live News</title>
+<style>
+:root{--primary:#16202a;--blue:#1683d8;--red:#e53935;--bg:#f3f5f7;--card:#fff;--muted:#68727d}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:#18212a;font-family:Arial,Helvetica,sans-serif}
+header{position:sticky;top:0;z-index:10;background:var(--primary);color:#fff;box-shadow:0 2px 12px #0002}
+.head{max-width:1250px;width:94%;margin:auto;min-height:66px;display:flex;align-items:center;gap:25px;justify-content:space-between}
+.logo{font-size:24px;font-weight:800;white-space:nowrap}.logo span{color:#38a8ff}
+nav{display:flex;gap:18px;overflow:auto}nav a{color:#fff;text-decoration:none;font-size:14px;white-space:nowrap}
+main{max-width:1250px;width:94%;margin:24px auto}
+.breaking{background:#fff;border-left:5px solid var(--red);padding:11px 14px;border-radius:7px;margin-bottom:18px;display:flex;gap:10px;align-items:center}
+.breaking b{color:var(--red)}
+.search{display:flex;gap:8px;margin-bottom:18px}.search input{flex:1;padding:13px;border:1px solid #ccd2d8;border-radius:7px;font-size:15px}.search button,.btn{border:0;border-radius:7px;background:var(--blue);color:#fff;padding:0 20px;font-weight:700;cursor:pointer}
+.cats{display:flex;gap:8px;overflow:auto;padding-bottom:8px;margin-bottom:20px}.cat{border:1px solid #d5dbe0;background:#fff;border-radius:20px;padding:8px 15px;white-space:nowrap;cursor:pointer}.cat.active{background:var(--blue);color:#fff;border-color:var(--blue)}
+.layout{display:grid;grid-template-columns:minmax(0,2fr) 340px;gap:22px}
+.feature{background:var(--card);border-radius:10px;overflow:hidden;box-shadow:0 2px 9px #00000012;margin-bottom:18px}.feature img{width:100%;height:390px;object-fit:cover;background:#ddd}.content{padding:20px}.content h1{font-size:28px;line-height:1.2;margin:7px 0 12px}.meta{font-size:13px;color:var(--muted);display:flex;gap:10px;flex-wrap:wrap}.source{font-weight:700;color:#26333e}.desc{color:#4e5963;line-height:1.6}
+.grid{display:grid;gap:15px}.card{display:grid;grid-template-columns:190px 1fr;background:#fff;border-radius:9px;overflow:hidden;box-shadow:0 2px 8px #00000010}.card img{width:190px;height:150px;object-fit:cover;background:#ddd}.card .content{padding:14px}.card h2{font-size:18px;line-height:1.3;margin:4px 0 8px}.card p{margin:8px 0;color:#58636d;font-size:14px}
+.sidebar{display:grid;gap:18px;align-content:start}.widget{background:#fff;border-radius:9px;padding:18px;box-shadow:0 2px 8px #00000010}.widget h3{margin:0 0 12px;border-bottom:1px solid #e4e7ea;padding-bottom:10px}.trend{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid #eee}.trend:last-child{border:0}.num{font-size:21px;font-weight:800;color:var(--blue)}
+.status{font-size:13px;color:var(--muted);margin:8px 0 15px}.error{background:#fff0f0;color:#a51d1d;padding:12px;border-radius:7px;margin-bottom:15px}
+footer{margin-top:35px;background:var(--primary);color:#cbd2d8;padding:35px 5%;text-align:center}
+@media(max-width:900px){.layout{grid-template-columns:1fr}.sidebar{grid-template-columns:1fr 1fr}.feature img{height:280px}}
+@media(max-width:600px){.head{flex-direction:column;align-items:flex-start;padding:12px 0;gap:10px}nav{width:100%}.card{grid-template-columns:1fr}.card img{width:100%;height:200px}.content h1{font-size:23px}.sidebar{grid-template-columns:1fr}.search button{padding:0 14px}}
+</style>
+</head>
+<body>
+<header><div class="head"><div class="logo">📰 Global<span>News</span>Hub</div><nav>
+<a href="#" data-nav="All">Home</a><a href="#" data-nav="World">World</a><a href="#" data-nav="India">India</a><a href="#" data-nav="Politics">Politics</a><a href="#" data-nav="Business">Business</a><a href="#" data-nav="Technology">Technology</a><a href="#" data-nav="Sports">Sports</a><a href="#" data-nav="Entertainment">Entertainment</a>
+</nav></div></header>
+<main>
+<div class="breaking"><b>LIVE</b><span id="breaking">Loading latest headlines…</span></div>
+<div class="search"><input id="q" placeholder="Search live news…"><button id="search">Search</button></div>
+<div class="cats" id="cats"></div>
+<div id="status" class="status">Connecting to news server…</div>
+<div id="error"></div>
+<div class="layout"><section><div id="news"></div></section>
+<aside class="sidebar"><div class="widget"><h3>Trending / Latest</h3><div id="trending">Loading…</div></div>
+<div class="widget"><h3>About this site</h3><p style="color:#59636c;line-height:1.5;margin:0">A live news aggregator. Articles are fetched from configured news sources and link back to the original publisher.</p></div></aside></div>
+</main>
+<footer>© 2026 Global News Hub · News belongs to its respective publishers.</footer>
+<script>
+const cats=["All","India","World","Politics","Business","Technology","Science","Health","Sports","Entertainment"];
+let current="All",query="";
+const catsEl=document.getElementById("cats");
+cats.forEach(c=>{const b=document.createElement("button");b.className="cat"+(c==="All"?" active":"");b.textContent=c;b.onclick=()=>{current=c;query="";document.getElementById("q").value="";setActive(b);load()};catsEl.appendChild(b)});
+function setActive(el){document.querySelectorAll(".cat").forEach(x=>x.classList.remove("active"));el.classList.add("active")}
+document.querySelectorAll("[data-nav]").forEach(a=>a.onclick=e=>{e.preventDefault();const c=a.dataset.nav;current=c;query="";document.getElementById("q").value="";document.querySelectorAll(".cat").forEach(x=>x.classList.toggle("active",x.textContent===c));load()});
+document.getElementById("search").onclick=()=>{query=document.getElementById("q").value.trim();load()};
+document.getElementById("q").onkeydown=e=>{if(e.key==="Enter"){query=e.target.value.trim();load()}};
+function esc(s=""){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
+function timeAgo(d){let x=Date.now()-new Date(d).getTime();if(!isFinite(x))return "";let m=Math.floor(x/60000);if(m<1)return "just now";if(m<60)return m+" min ago";let h=Math.floor(m/60);if(h<24)return h+" hr ago";return Math.floor(h/24)+" days ago"}
+async function load(){
+ document.getElementById("error").innerHTML="";document.getElementById("status").textContent="Loading live news…";
+ const p=new URLSearchParams({category:current,search:query});
+ try{const r=await fetch("/api/news?"+p);if(!r.ok)throw Error("HTTP "+r.status);const data=await r.json();render(data.articles||[]);document.getElementById("status").textContent=`Updated ${new Date().toLocaleTimeString()} · ${data.articles.length} articles`;if(data.articles[0])document.getElementById("breaking").textContent=data.articles[0].title}catch(e){document.getElementById("error").innerHTML='<div class="error">Could not load live news. Make sure the backend is running and your news API key is configured.</div>';document.getElementById("status").textContent="Offline"}}
+function render(a){
+ if(!a.length){document.getElementById("news").innerHTML="<div class='widget'><h3>No stories found</h3><p>Try another category or search term.</p></div>";document.getElementById("trending").innerHTML="";return}
+ const first=a[0], rest=a.slice(1);
+ document.getElementById("news").innerHTML=`<article class="feature"><img src="${esc(first.image||"https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=1200&q=80")}" onerror="this.src='https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=1200&q=80'"><div class="content"><div class="meta"><span class="source">${esc(first.source)}</span><span>${timeAgo(first.publishedAt)}</span><span>${esc(first.category)}</span></div><h1>${esc(first.title)}</h1><p class="desc">${esc(first.description||"")}</p><a class="btn" style="display:inline-block;padding:10px 15px;text-decoration:none" target="_blank" rel="noopener" href="${esc(first.url)}">Read original article ↗</a></div></article><div class="grid">${rest.map(x=>`<article class="card"><img src="${esc(x.image||"https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=600&q=80")}" onerror="this.style.display='none'"><div class="content"><div class="meta"><span class="source">${esc(x.source)}</span><span>${timeAgo(x.publishedAt)}</span></div><h2>${esc(x.title)}</h2><p>${esc(x.description||"")}</p><a target="_blank" rel="noopener" href="${esc(x.url)}">Read article →</a></div></article>`).join("")}</div>`;
+ document.getElementById("trending").innerHTML=a.slice(0,6).map((x,i)=>`<div class="trend"><span class="num">${i+1}</span><a target="_blank" rel="noopener" href="${esc(x.url)}" style="color:#18212a;text-decoration:none">${esc(x.title)}</a></div>`).join("");
+}
+load();
+setInterval(load,5*60*1000);
+</script>
+</body>
+</html>
